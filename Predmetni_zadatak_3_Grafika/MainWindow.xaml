@@ -1,12 +1,46 @@
-﻿<Window x:Class="Predmetni_zadatak_3_Grafika.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Predmetni_zadatak_3_Grafika"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+﻿<Window
+ x:Class="Predmetni_zadatak_3_Grafika.MainWindow"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:local="clr-namespace:Predmetni_zadatak_3_Grafika"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ Title="MainWindow"
+ Width="983.075"
+ Height="837"
+ mc:Ignorable="d">
     <Grid>
-        
+        <Viewport3D>
+            <Viewport3D.Camera>
+                <PerspectiveCamera
+                 LookDirection="0,0,-1"
+                 Position="0.5,0.5,2"
+                 UpDirection="0,1,0" />
+            </Viewport3D.Camera>
+            <!--  1175 x 775  -->
+            <ModelVisual3D>
+                <ModelVisual3D.Content>
+                    <Model3DGroup>
+                        <AmbientLight Color="White" />
+
+                        <GeometryModel3D x:Name="ground">
+                            <GeometryModel3D.Material>
+                                <DiffuseMaterial>
+                                    <DiffuseMaterial.Brush>
+                                        <ImageBrush ImageSource="/Resources/PZ3 - map.jpg" />
+                                    </DiffuseMaterial.Brush>
+                                </DiffuseMaterial>
+                            </GeometryModel3D.Material>
+                            <GeometryModel3D.Geometry>
+                                <MeshGeometry3D
+                                 Positions="0,0,0 1,0,0 0,1,0 1,1,0"
+                                 TextureCoordinates="0,1 1,1 0,0 1,0"
+                                 TriangleIndices="0,1,2 2,1,3" />
+                            </GeometryModel3D.Geometry>
+                        </GeometryModel3D>
+                    </Model3DGroup>
+                </ModelVisual3D.Content>
+            </ModelVisual3D>
+        </Viewport3D>
     </Grid>
 </Window>
