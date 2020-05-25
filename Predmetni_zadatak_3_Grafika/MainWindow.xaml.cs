@@ -34,8 +34,8 @@ namespace Predmetni_zadatak_3_Grafika
         {
             InitializeComponent();
 
-            xScale = 1175 / (Utils.LAT_MAX - Utils.LAT_MIN);
-            yScale = 775 / (Utils.LON_MAX - Utils.LON_MIN);
+            xScale = (Utils.LAT_MAX - Utils.LAT_MIN) / 1175;
+            yScale = (Utils.LON_MAX - Utils.LON_MIN) / 775;
 
             var doc = new XmlDocument();
             doc.Load("Geographic.xml");
@@ -45,10 +45,10 @@ namespace Predmetni_zadatak_3_Grafika
             Utils.AddEntities(switchEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Switches/SwitchEntity"));
             Utils.AddLineEntities(lineEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Lines/LineEntity"));
 
-            substationEntities.ForEach(item => { item.X = Utils.Convert(item.X, xScale, Utils.LAT_MIN, SIZE, 1175); item.Y = Utils.Convert(item.Y, yScale, Utils.LON_MIN, SIZE, 775); });
-            nodeEntities.ForEach(item => { item.X = Utils.Convert(item.X, xScale, Utils.LAT_MIN, SIZE, 1175); item.Y = Utils.Convert(item.Y, yScale, Utils.LON_MIN, SIZE, 775); });
-            switchEntities.ForEach(item => { item.X = Utils.Convert(item.X, xScale, Utils.LAT_MIN, SIZE, 1175); item.Y = Utils.Convert(item.Y, yScale, Utils.LON_MIN, SIZE, 775); });
-            lineEntities.ForEach(item => item.Vertices.ForEach(vert => { vert.X = Utils.Convert(vert.X, xScale, Utils.LAT_MIN, SIZE, 1175); vert.Y = Utils.Convert(vert.Y, yScale, Utils.LON_MIN, SIZE, 775); }));
+            substationEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
+            nodeEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
+            switchEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
+            lineEntities.ForEach(item => item.Vertices.ForEach(vert => { vert.X = Utils.Convert(vert.X, Utils.LAT_MIN, xScale); vert.Y = Utils.Convert(vert.Y, Utils.LON_MIN, yScale); }));
 
             substationEntities.ForEach(item => MakeCube(item, Brushes.Red));
             nodeEntities.ForEach(item => MakeCube(item, Brushes.Green));
