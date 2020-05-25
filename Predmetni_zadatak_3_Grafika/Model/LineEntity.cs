@@ -1,4 +1,6 @@
-﻿namespace Predmetni_zadatak_3_Grafika.Model
+﻿using System.Collections.Generic;
+
+namespace Predmetni_zadatak_3_Grafika.Model
 {
     public class LineEntity
     {
@@ -24,5 +26,7 @@
         public long FirstEnd { get; set; }
 
         public long SecondEnd { get; set; }
+
+        public List<Point> Vertices { get; set; }
     }
 }

@@ -9,10 +9,10 @@ namespace Predmetni_zadatak_3_Grafika.Services
 {
     public static class Utils
     {
-        private const double LAT_MIN = 45.2325;
-        private const double LAT_MAX = 45.277031;
-        private const double LON_MIN = 19.793909;
-        private const double LON_MAX = 19.894459;
+        public const double LAT_MIN = 45.2325;
+        public const double LAT_MAX = 45.277031;
+        public const double LON_MIN = 19.793909;
+        public const double LON_MAX = 19.894459;
 
         public static void AddEntities<T>(List<T> entities, XmlNodeList nodeList) where T : PowerEntity, new()
         {
@@ -54,14 +54,26 @@ namespace Predmetni_zadatak_3_Grafika.Services
                     R = float.Parse(item.SelectSingleNode("R").InnerText, CultureInfo.InvariantCulture),
                     ThermalConstantHeat = long.Parse(item.SelectSingleNode("ThermalConstantHeat").InnerText, CultureInfo.InvariantCulture),
                     FirstEnd = long.Parse(item.SelectSingleNode("FirstEnd").InnerText, CultureInfo.InvariantCulture),
-                    SecondEnd = long.Parse(item.SelectSingleNode("SecondEnd").InnerText, CultureInfo.InvariantCulture)
+                    SecondEnd = long.Parse(item.SelectSingleNode("SecondEnd").InnerText, CultureInfo.InvariantCulture),
+                    Vertices = new List<Point>()
                 };
-                if (entites.Any((ent) => ent.FirstEnd == line.SecondEnd && ent.SecondEnd == line.FirstEnd))
+
+                foreach (XmlNode point in item.SelectSingleNode("Vertices"))
                 {
-                    continue;
+                    line.Vertices.Add(new Point()
+                    {
+                        X = double.Parse(point.SelectSingleNode("X").InnerText, CultureInfo.InvariantCulture),
+                        Y = double.Parse(point.SelectSingleNode("Y").InnerText, CultureInfo.InvariantCulture)
+                    });
                 }
+
                 entites.Add(line);
             }
+        }
+
+        public static double Convert(double point, double scale, double start, double size, double width)
+        {
+            return ((point - start) * scale / size) * size % width;
         }
 
         public static void ToLatLon(double utmX, double utmY, int zoneUTM, out double latitude, out double longitude)
