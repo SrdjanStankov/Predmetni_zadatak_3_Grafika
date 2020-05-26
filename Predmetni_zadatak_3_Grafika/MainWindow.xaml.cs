@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +32,7 @@ namespace Predmetni_zadatak_3_Grafika
         private List<SwitchEntity> switchEntities = new List<SwitchEntity>();
         private List<LineEntity> lineEntities = new List<LineEntity>();
         private Dictionary<int, PowerEntity> entities = new Dictionary<int, PowerEntity>();
+        private CancellationTokenSource cts = new CancellationTokenSource();
 
         public MainWindow()
         {
@@ -235,12 +237,14 @@ namespace Predmetni_zadatak_3_Grafika
             label.Content = $"Id: {entity.Id}, Name: {entity.Name}, Type: {entity.GetType().Name}";
             label.Background = Brushes.White;
             groupBox.Content = label;
-            Task.Run(() => RemoveLabelAsync(2));
+            cts.Cancel();
+            cts = new CancellationTokenSource();
+            Task.Run(() => RemoveLabelAsync(2), cts.Token);
         }
 
         private async Task RemoveLabelAsync(int seconds)
         {
-            await Task.Delay(seconds * 1000);
+            await Task.Delay(seconds * 1000, cts.Token);
             Dispatcher.Invoke(() => { groupBox.Content = null; });
         }
 
