@@ -233,9 +233,22 @@ namespace Predmetni_zadatak_3_Grafika
             var label = new Label();
             label.HorizontalAlignment = HorizontalAlignment.Left;
             label.VerticalAlignment = VerticalAlignment.Top;
-            label.Margin = new Thickness(mousePosition.X, mousePosition.Y, 0, 0);
             label.Content = $"Id: {entity.Id}, Name: {entity.Name}, Type: {entity.GetType().Name}";
             label.Background = Brushes.White;
+            label.Margin = new Thickness(mousePosition.X, mousePosition.Y, 0, 0);
+
+            label.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            label.Arrange(new Rect(label.DesiredSize));
+
+            if (mousePosition.X + label.ActualWidth > win.Width)
+            {
+                label.Margin = new Thickness(mousePosition.X - label.ActualWidth, mousePosition.Y, 0, 0);
+            }
+            if (mousePosition.Y + label.ActualHeight > win.Height)
+            {
+                label.Margin = new Thickness(mousePosition.X, mousePosition.Y - label.ActualHeight, 0, 0);
+            }
+
             groupBox.Content = label;
             cts.Cancel();
             cts = new CancellationTokenSource();
