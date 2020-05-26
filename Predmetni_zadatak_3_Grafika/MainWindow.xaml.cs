@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -19,6 +19,7 @@ namespace Predmetni_zadatak_3_Grafika
         const double SIZE = 10;
         private Point start = new Point();
         private Point diffOffset = new Point();
+        private Point mousePosition = new Point();
         private int zoomMax = 7;
         private int zoomCurent = 1;
         private bool rotate = false;
@@ -29,6 +30,7 @@ namespace Predmetni_zadatak_3_Grafika
         private List<NodeEntity> nodeEntities = new List<NodeEntity>();
         private List<SwitchEntity> switchEntities = new List<SwitchEntity>();
         private List<LineEntity> lineEntities = new List<LineEntity>();
+        private Dictionary<int, PowerEntity> entities = new Dictionary<int, PowerEntity>();
 
         public MainWindow()
         {
@@ -50,12 +52,14 @@ namespace Predmetni_zadatak_3_Grafika
             switchEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
             lineEntities.ForEach(item => item.Vertices.ForEach(vert => { vert.X = Utils.Convert(vert.X, Utils.LAT_MIN, xScale); vert.Y = Utils.Convert(vert.Y, Utils.LON_MIN, yScale); }));
 
-            substationEntities.ForEach(item => MakeCube(item, Brushes.Red));
-            nodeEntities.ForEach(item => MakeCube(item, Brushes.Green));
-            switchEntities.ForEach(item => MakeCube(item, Brushes.Blue));
+            int counter = 1;
+
+            substationEntities.ForEach(item => { MakeCube(item, Brushes.Red, counter); entities.Add(counter++, item); });
+            nodeEntities.ForEach(item => { MakeCube(item, Brushes.Green, counter); entities.Add(counter++, item); });
+            switchEntities.ForEach(item => { MakeCube(item, Brushes.Blue, counter); entities.Add(counter++, item); });
         }
 
-        private void MakeCube(PowerEntity entity, Brush brush)
+        private void MakeCube(PowerEntity entity, Brush brush, int tag)
         {
             const double HALF_SIZE = SIZE / 2;
 
@@ -123,7 +127,9 @@ namespace Predmetni_zadatak_3_Grafika
 
             var material = new DiffuseMaterial(brush);
 
-            modelGroup.Children.Add(new GeometryModel3D(mesh, material));
+            var model = new GeometryModel3D(mesh, material);
+            model.SetValue(TagProperty, tag);
+            modelGroup.Children.Add(model);
         }
 
         private void Viewport3D_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -197,6 +203,7 @@ namespace Predmetni_zadatak_3_Grafika
 
                 //test for a result in the Viewport3D     
                 hitgeo = null;
+                mousePosition = e.GetPosition(win);
                 VisualTreeHelper.HitTest(viewPort, null, HitResult, pointparams);
             }
         }
@@ -209,7 +216,32 @@ namespace Predmetni_zadatak_3_Grafika
                 return HitTestResultBehavior.Stop;
             }
 
+            var tag = rayResult.ModelHit.GetValue(TagProperty);
+            if (tag is object)
+            {
+                var a = (int)tag;
+                CreateLabel(mousePosition, entities[a]);
+            }
+
             return HitTestResultBehavior.Stop;
+        }
+
+        private void CreateLabel(Point mousePosition, PowerEntity entity)
+        {
+            var label = new Label();
+            label.HorizontalAlignment = HorizontalAlignment.Left;
+            label.VerticalAlignment = VerticalAlignment.Top;
+            label.Margin = new Thickness(mousePosition.X, mousePosition.Y, 0, 0);
+            label.Content = $"Id: {entity.Id}, Name: {entity.Name}, Type: {entity.GetType().Name}";
+            label.Background = Brushes.White;
+            groupBox.Content = label;
+            Task.Run(() => RemoveLabelAsync(2));
+        }
+
+        private async Task RemoveLabelAsync(int seconds)
+        {
+            await Task.Delay(seconds * 1000);
+            Dispatcher.Invoke(() => { groupBox.Content = null; });
         }
 
         private void viewPort_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
