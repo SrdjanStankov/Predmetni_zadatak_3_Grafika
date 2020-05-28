@@ -70,8 +70,6 @@ namespace Predmetni_zadatak_3_Grafika
                     MakeLine(0.5, item.Vertices[i], item.Vertices[i + 1], item);
                 }
             }
-
-            //MakeLine(2, lineEntities[0].Vertices[0], lineEntities[0].Vertices[1]);
         }
 
         private void MakeLine(double size, Point3D start, Point3D end, LineEntity entity)
@@ -268,7 +266,7 @@ namespace Predmetni_zadatak_3_Grafika
                 return HitTestResultBehavior.Stop;
             }
 
-            var tag = rayResult.ModelHit.GetValue(TagProperty) as PowerEntity;
+            var tag = rayResult.ModelHit.GetValue(TagProperty);
             if (tag is object)
             {
                 CreateLabel(mousePosition, tag);
@@ -277,12 +275,19 @@ namespace Predmetni_zadatak_3_Grafika
             return HitTestResultBehavior.Stop;
         }
 
-        private void CreateLabel(Point mousePosition, PowerEntity entity)
+        private void CreateLabel(Point mousePosition, object entity)
         {
             var label = new Label();
             label.HorizontalAlignment = HorizontalAlignment.Left;
             label.VerticalAlignment = VerticalAlignment.Top;
-            label.Content = $"Id: {entity.Id}, Name: {entity.Name}, Type: {entity.GetType().Name}";
+            if (entity is PowerEntity)
+            {
+                label.Content = $"Id: {(entity as PowerEntity).Id}, Name: {(entity as PowerEntity).Name}, Type: {(entity as PowerEntity).GetType().Name}";
+            }
+            if (entity is LineEntity)
+            {
+                label.Content = $"Id: {(entity as LineEntity).Id}, Name: {(entity as LineEntity).Name}, Type: {(entity as LineEntity).GetType().Name}";
+            }
             label.Background = Brushes.White;
             label.Margin = new Thickness(mousePosition.X, mousePosition.Y, 0, 0);
 
