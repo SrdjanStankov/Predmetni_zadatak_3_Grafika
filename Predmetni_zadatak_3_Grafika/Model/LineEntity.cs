@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Media.Media3D;
 
 namespace Predmetni_zadatak_3_Grafika.Model
 {
@@ -27,6 +28,6 @@ namespace Predmetni_zadatak_3_Grafika.Model
 
         public long SecondEnd { get; set; }
 
-        public List<Point> Vertices { get; set; }
+        public List<Point3D> Vertices { get; set; }
     }
 }

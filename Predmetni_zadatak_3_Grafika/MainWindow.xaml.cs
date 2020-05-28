@@ -51,11 +51,64 @@ namespace Predmetni_zadatak_3_Grafika
             substationEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
             nodeEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
             switchEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
-            lineEntities.ForEach(item => item.Vertices.ForEach(vert => { vert.X = Utils.Convert(vert.X, Utils.LAT_MIN, xScale); vert.Y = Utils.Convert(vert.Y, Utils.LON_MIN, yScale); }));
+            lineEntities.ForEach(item =>
+            {
+                for (var j = 0; j < item.Vertices.Count; j++)
+                {
+                    item.Vertices[j] = new Point3D(Utils.Convert(item.Vertices[j].X, Utils.LAT_MIN, xScale), Utils.Convert(item.Vertices[j].Y, Utils.LON_MIN, yScale), item.Vertices[j].Z);
+                }
+            });
 
             substationEntities.ForEach(item => MakeCube(item, Brushes.Red));
             nodeEntities.ForEach(item => MakeCube(item, Brushes.Green));
             switchEntities.ForEach(item => MakeCube(item, Brushes.Blue));
+
+            foreach (var item in lineEntities)
+            {
+                for (int i = 0; i < item.Vertices.Count - 1; i++)
+                {
+                    MakeLine(0.5, item.Vertices[i], item.Vertices[i + 1], item);
+                }
+            }
+
+            //MakeLine(2, lineEntities[0].Vertices[0], lineEntities[0].Vertices[1]);
+        }
+
+        private void MakeLine(double size, Point3D start, Point3D end, LineEntity entity)
+        {
+            Vector3D v = end - start;
+            Vector3D v1 = new Vector3D(v.X, -v.Y, v.Z);
+            Vector3D v2 = new Vector3D(-v.X, v.Y, v.Z);
+            v1.Normalize();
+            v2.Normalize();
+
+            v1 *= size;
+            v2 *= size;
+            var p1 = end;
+            var p2 = start;
+            var pointB = p1 + v1;
+            var pointC = p1 + v2;
+            var pointA = p2 + v1;
+            var pointD = p2 + v2;
+
+            var mesh = new MeshGeometry3D();
+            mesh.Positions.Add(pointB);
+            mesh.Positions.Add(pointC);
+            mesh.Positions.Add(pointA);
+            mesh.Positions.Add(pointD);
+
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(2);
+
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(2);
+
+            var material = new DiffuseMaterial(Brushes.Purple);
+            var model = new GeometryModel3D(mesh, material);
+            model.SetValue(TagProperty, entity);
+            modelGroup.Children.Add(model);
         }
 
         private void MakeCube(PowerEntity entity, Brush brush)

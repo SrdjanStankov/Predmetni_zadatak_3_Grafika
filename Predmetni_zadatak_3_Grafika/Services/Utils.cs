@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Media.Media3D;
 using System.Xml;
 using Predmetni_zadatak_3_Grafika.Model;
 
@@ -55,16 +56,21 @@ namespace Predmetni_zadatak_3_Grafika.Services
                     ThermalConstantHeat = long.Parse(item.SelectSingleNode("ThermalConstantHeat").InnerText, CultureInfo.InvariantCulture),
                     FirstEnd = long.Parse(item.SelectSingleNode("FirstEnd").InnerText, CultureInfo.InvariantCulture),
                     SecondEnd = long.Parse(item.SelectSingleNode("SecondEnd").InnerText, CultureInfo.InvariantCulture),
-                    Vertices = new List<Point>()
+                    Vertices = new List<Point3D>()
                 };
 
                 foreach (XmlNode point in item.SelectSingleNode("Vertices"))
                 {
                     ToLatLon(double.Parse(point.SelectSingleNode("X").InnerText, CultureInfo.InvariantCulture), double.Parse(point.SelectSingleNode("Y").InnerText, CultureInfo.InvariantCulture), 34, out var x, out var y);
-                    line.Vertices.Add(new Point()
+                    if (!(LAT_MIN <= x && x <= LAT_MAX) || !(LON_MIN <= y && y <= LON_MAX))
+                    {
+                        continue;
+                    }
+                    line.Vertices.Add(new Point3D()
                     {
                         X = x,
-                        Y = y
+                        Y = y, 
+                        Z = 20
                     });
                 }
 
