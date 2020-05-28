@@ -60,10 +60,11 @@ namespace Predmetni_zadatak_3_Grafika.Services
 
                 foreach (XmlNode point in item.SelectSingleNode("Vertices"))
                 {
+                    ToLatLon(double.Parse(point.SelectSingleNode("X").InnerText, CultureInfo.InvariantCulture), double.Parse(point.SelectSingleNode("Y").InnerText, CultureInfo.InvariantCulture), 34, out var x, out var y);
                     line.Vertices.Add(new Point()
                     {
-                        X = double.Parse(point.SelectSingleNode("X").InnerText, CultureInfo.InvariantCulture),
-                        Y = double.Parse(point.SelectSingleNode("Y").InnerText, CultureInfo.InvariantCulture)
+                        X = x,
+                        Y = y
                     });
                 }
 
