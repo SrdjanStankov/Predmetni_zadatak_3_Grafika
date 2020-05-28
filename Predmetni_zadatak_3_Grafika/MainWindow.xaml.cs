@@ -31,7 +31,6 @@ namespace Predmetni_zadatak_3_Grafika
         private List<NodeEntity> nodeEntities = new List<NodeEntity>();
         private List<SwitchEntity> switchEntities = new List<SwitchEntity>();
         private List<LineEntity> lineEntities = new List<LineEntity>();
-        private Dictionary<int, PowerEntity> entities = new Dictionary<int, PowerEntity>();
         private CancellationTokenSource cts = new CancellationTokenSource();
 
         public MainWindow()
@@ -54,14 +53,12 @@ namespace Predmetni_zadatak_3_Grafika
             switchEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
             lineEntities.ForEach(item => item.Vertices.ForEach(vert => { vert.X = Utils.Convert(vert.X, Utils.LAT_MIN, xScale); vert.Y = Utils.Convert(vert.Y, Utils.LON_MIN, yScale); }));
 
-            int counter = 1;
-
-            substationEntities.ForEach(item => { MakeCube(item, Brushes.Red, counter); entities.Add(counter++, item); });
-            nodeEntities.ForEach(item => { MakeCube(item, Brushes.Green, counter); entities.Add(counter++, item); });
-            switchEntities.ForEach(item => { MakeCube(item, Brushes.Blue, counter); entities.Add(counter++, item); });
+            substationEntities.ForEach(item => MakeCube(item, Brushes.Red));
+            nodeEntities.ForEach(item => MakeCube(item, Brushes.Green));
+            switchEntities.ForEach(item => MakeCube(item, Brushes.Blue));
         }
 
-        private void MakeCube(PowerEntity entity, Brush brush, int tag)
+        private void MakeCube(PowerEntity entity, Brush brush)
         {
             const double HALF_SIZE = SIZE / 2;
 
@@ -130,7 +127,7 @@ namespace Predmetni_zadatak_3_Grafika
             var material = new DiffuseMaterial(brush);
 
             var model = new GeometryModel3D(mesh, material);
-            model.SetValue(TagProperty, tag);
+            model.SetValue(TagProperty, entity);
             modelGroup.Children.Add(model);
         }
 
@@ -218,11 +215,10 @@ namespace Predmetni_zadatak_3_Grafika
                 return HitTestResultBehavior.Stop;
             }
 
-            var tag = rayResult.ModelHit.GetValue(TagProperty);
+            var tag = rayResult.ModelHit.GetValue(TagProperty) as PowerEntity;
             if (tag is object)
             {
-                var a = (int)tag;
-                CreateLabel(mousePosition, entities[a]);
+                CreateLabel(mousePosition, tag);
             }
 
             return HitTestResultBehavior.Stop;
