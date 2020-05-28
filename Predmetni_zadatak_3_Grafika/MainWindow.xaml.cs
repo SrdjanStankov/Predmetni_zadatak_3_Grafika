@@ -103,7 +103,21 @@ namespace Predmetni_zadatak_3_Grafika
             mesh.TriangleIndices.Add(3);
             mesh.TriangleIndices.Add(2);
 
-            var material = new DiffuseMaterial(Brushes.Purple);
+            Brush color;
+            if (entity.R < 1)
+            {
+                color = Brushes.Red;
+            }
+            else if (entity.R < 2)
+            {
+                color = Brushes.Orange;
+            }
+            else
+            {
+                color = Brushes.Yellow;
+            }
+
+            var material = new DiffuseMaterial(color);
             var model = new GeometryModel3D(mesh, material);
             model.SetValue(TagProperty, entity);
             modelGroup.Children.Add(model);
