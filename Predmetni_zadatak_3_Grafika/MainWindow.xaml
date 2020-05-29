@@ -16,7 +16,6 @@
          ClipToBounds="True"
          MouseDown="viewPort_MouseDown"
          MouseLeftButtonDown="Viewport3D_MouseLeftButtonDown"
-         MouseLeftButtonUp="viewPort_MouseLeftButtonUp"
          MouseMove="viewPort_MouseMove"
          MouseUp="viewPort_MouseUp"
          MouseWheel="viewPort_MouseWheel">
@@ -33,12 +32,10 @@
                              OffsetY="0"
                              OffsetZ="0" />
                             <ScaleTransform3D
-                             x:Name="skaliranje"
                              ScaleX="1"
                              ScaleY="1"
                              ScaleZ="1" />
                             <RotateTransform3D
-                             x:Name="rotiranje"
                              CenterX="0"
                              CenterY="0"
                              CenterZ="0" />
@@ -48,6 +45,20 @@
             </Viewport3D.Camera>
             <!--  1175 x 775  -->
             <ModelVisual3D>
+                <ModelVisual3D.Transform>
+                    <Transform3DGroup>
+                        <ScaleTransform3D
+                         x:Name="skaliranje"
+                         ScaleX="1"
+                         ScaleY="1"
+                         ScaleZ="1" />
+                        <RotateTransform3D
+                         x:Name="rotiranje"
+                         CenterX="587.5"
+                         CenterY="387.5"
+                         CenterZ="0" />
+                    </Transform3DGroup>
+                </ModelVisual3D.Transform>
                 <ModelVisual3D.Content>
                     <Model3DGroup x:Name="modelGroup">
                         <AmbientLight Color="White" />
@@ -73,5 +84,27 @@
         </Viewport3D>
 
         <GroupBox x:Name="groupBox" />
+        <StackPanel Orientation="Horizontal">
+            <Label
+             Name="lab"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             Content="text" />
+            <Label
+             Name="lab2"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             Content="text" />
+            <Label
+             Name="lab3"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             Content="text" />
+            <Label
+             Name="lab4"
+             HorizontalAlignment="Left"
+             VerticalAlignment="Top"
+             Content="text" />
+        </StackPanel>
     </Grid>
 </Window>

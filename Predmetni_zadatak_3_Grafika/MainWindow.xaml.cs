@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -17,7 +18,7 @@ namespace Predmetni_zadatak_3_Grafika
     /// </summary>
     public partial class MainWindow : Window
     {
-        const double SIZE = 10;
+        private const double SIZE = 10;
         private Point start = new Point();
         private Point diffOffset = new Point();
         private Point mousePosition = new Point();
@@ -31,6 +32,7 @@ namespace Predmetni_zadatak_3_Grafika
         private List<SwitchEntity> switchEntities = new List<SwitchEntity>();
         private List<LineEntity> lineEntities = new List<LineEntity>();
         private CancellationTokenSource cts = new CancellationTokenSource();
+        private AxisAngleRotation3D axisAngleRotation = new AxisAngleRotation3D();
 
         public MainWindow()
         {
@@ -64,7 +66,7 @@ namespace Predmetni_zadatak_3_Grafika
 
             foreach (var item in lineEntities)
             {
-                for (int i = 0; i < item.Vertices.Count - 1; i++)
+                for (var i = 0; i < item.Vertices.Count - 1; i++)
                 {
                     MakeLine(0.5, item.Vertices[i], item.Vertices[i + 1], item);
                 }
@@ -73,9 +75,9 @@ namespace Predmetni_zadatak_3_Grafika
 
         private void MakeLine(double size, Point3D start, Point3D end, LineEntity entity)
         {
-            Vector3D v = end - start;
-            Vector3D v1 = new Vector3D(v.X, -v.Y, v.Z);
-            Vector3D v2 = new Vector3D(-v.X, v.Y, v.Z);
+            var v = end - start;
+            var v1 = new Vector3D(v.X, -v.Y, v.Z);
+            var v2 = new Vector3D(-v.X, v.Y, v.Z);
             v1.Normalize();
             v2.Normalize();
 
@@ -203,8 +205,6 @@ namespace Predmetni_zadatak_3_Grafika
             diffOffset.Y = translacija.OffsetY;
         }
 
-        private void viewPort_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e) => viewPort.ReleaseMouseCapture();
-
         private void viewPort_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (viewPort.IsMouseCaptured)
@@ -216,55 +216,74 @@ namespace Predmetni_zadatak_3_Grafika
                 var h = Height;
                 var translateX = (offsetX * 100) / w;
                 var translateY = -(offsetY * 100) / h;
-                translacija.OffsetX = diffOffset.X + (translateX / (100 * skaliranje.ScaleX));
-                translacija.OffsetY = diffOffset.Y + (translateY / (100 * skaliranje.ScaleX));
+                translacija.OffsetX = diffOffset.X + (translateX / (100 * skaliranje.ScaleX)) * 1000;
+                translacija.OffsetY = diffOffset.Y + (translateY / (100 * skaliranje.ScaleX)) * 1000;
             }
             if (rotate)
             {
-
+                var end = e.GetPosition(this);
+                var axis2D = end - start;
+                var axis3D = new Vector3D(-axis2D.Y, -axis2D.X, 0);
+                lab2.Content = $"start: {start}";
+                lab3.Content = $"end: {end}";
+                axisAngleRotation.Axis = axis3D;
+                axis2D.Normalize();
+                if (axis2D.X < 0 || axis2D.Y < 0)
+                {
+                    axisAngleRotation.Angle -= 0.05;
+                    lab.Content = $"Manje";
+                }
+                else
+                {
+                    axisAngleRotation.Angle += 0.05;
+                    lab.Content = $"Vece";
+                }
+                lab4.Content = $"Angle: {axisAngleRotation.Angle}";
+                //rotiranje.Rotation = new AxisAngleRotation3D(axis3D, angle);
             }
         }
 
-        private void viewPort_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void viewPort_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var p = e.MouseDevice.GetPosition(this);
-            double scaleY;
-            double scaleX;
+            var p = e.GetPosition(win);
+            p = PointFromScreen(p);
+            skaliranje.CenterX = p.X;
+            skaliranje.CenterY = p.Y;
+            skaliranje.CenterZ = 0;
             if (e.Delta > 0 && zoomCurent < zoomMax)
             {
-                scaleX = skaliranje.ScaleX + 0.1;
-                scaleY = skaliranje.ScaleY + 0.1;
                 zoomCurent++;
-                skaliranje.ScaleX = scaleX;
-                skaliranje.ScaleY = scaleY;
+                skaliranje.ScaleX += 0.1;
+                skaliranje.ScaleY += 0.1;
+                skaliranje.ScaleZ += 0.1;
             }
             else if (e.Delta <= 0 && zoomCurent > -zoomMax)
             {
-                scaleX = skaliranje.ScaleX - 0.1;
-                scaleY = skaliranje.ScaleY - 0.1;
                 zoomCurent--;
-                skaliranje.ScaleX = scaleX;
-                skaliranje.ScaleY = scaleY;
+                skaliranje.ScaleX -= 0.1;
+                skaliranje.ScaleY -= 0.1;
+                skaliranje.ScaleZ -= 0.1;
             }
         }
 
-        private void viewPort_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void viewPort_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == System.Windows.Input.MouseButton.Middle && e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
             {
                 rotate = true;
+                start = e.GetPosition(this);
+                rotiranje.Rotation = axisAngleRotation;
             }
 
-            if (e.ChangedButton == System.Windows.Input.MouseButton.Left && e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+            if (e.ChangedButton == MouseButton.Left && e.ButtonState == MouseButtonState.Pressed)
             {
                 var mouseposition = e.GetPosition(viewPort);
-                Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
-                Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+                var testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+                var testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
 
-                PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
-                RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+                var pointparams = new PointHitTestParameters(mouseposition);
+                var rayparams = new RayHitTestParameters(testpoint3D, testdirection);
 
-                //test for a result in the Viewport3D     
                 mousePosition = e.GetPosition(win);
                 VisualTreeHelper.HitTest(viewPort, null, HitResult, pointparams);
             }
@@ -273,12 +292,7 @@ namespace Predmetni_zadatak_3_Grafika
         private HitTestResultBehavior HitResult(HitTestResult result)
         {
             var rayResult = result as RayHitTestResult;
-            if (rayResult is null)
-            {
-                return HitTestResultBehavior.Stop;
-            }
-
-            var tag = rayResult.ModelHit.GetValue(TagProperty);
+            var tag = rayResult?.ModelHit.GetValue(TagProperty);
             if (tag is object)
             {
                 CreateLabel(mousePosition, tag);
@@ -289,16 +303,14 @@ namespace Predmetni_zadatak_3_Grafika
 
         private void CreateLabel(Point mousePosition, object entity)
         {
-            var label = new Label();
-            label.HorizontalAlignment = HorizontalAlignment.Left;
-            label.VerticalAlignment = VerticalAlignment.Top;
-            if (entity is PowerEntity)
+            var label = new Label
             {
-                label.Content = $"Id: {(entity as PowerEntity).Id}, Name: {(entity as PowerEntity).Name}, Type: {(entity as PowerEntity).GetType().Name}";
-            }
-            if (entity is LineEntity)
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            if (entity is BaseEntity)
             {
-                label.Content = $"Id: {(entity as LineEntity).Id}, Name: {(entity as LineEntity).Name}, Type: {(entity as LineEntity).GetType().Name}";
+                label.Content = $"Id: {(entity as BaseEntity).Id}, Name: {(entity as BaseEntity).Name}, Type: {(entity as BaseEntity).GetType().Name}";
             }
             label.Background = Brushes.White;
             label.Margin = new Thickness(mousePosition.X, mousePosition.Y, 0, 0);
@@ -327,12 +339,11 @@ namespace Predmetni_zadatak_3_Grafika
             Dispatcher.Invoke(() => { groupBox.Content = null; });
         }
 
-        private void viewPort_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void viewPort_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == System.Windows.Input.MouseButton.Middle && e.ButtonState == System.Windows.Input.MouseButtonState.Released)
-            {
-                rotate = false;
-            }
+            rotate = false;
+            viewPort.ReleaseMouseCapture();
+            //AxisAngleRotation = new AxisAngleRotation3D();
         }
     }
 }
