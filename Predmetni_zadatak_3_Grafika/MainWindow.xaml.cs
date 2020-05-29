@@ -241,6 +241,11 @@ namespace Predmetni_zadatak_3_Grafika
             {
                 var end = e.GetPosition(this);
                 var axis2D = end - start;
+                if ((-20 < axis2D.X && axis2D.X < 0) || (-20 < axis2D.Y && axis2D.Y < 0) || (0 > axis2D.X && axis2D.X > 20) || (0 > axis2D.Y && axis2D.Y > 20))
+                {
+                    return;
+                }
+
                 var axis3D = new Vector3D(-axis2D.Y, -axis2D.X, 0);
                 axisAngleRotation.Axis = axis3D;
                 axis2D.Normalize();
