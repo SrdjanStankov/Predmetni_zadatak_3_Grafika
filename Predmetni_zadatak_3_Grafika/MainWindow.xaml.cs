@@ -197,7 +197,7 @@ namespace Predmetni_zadatak_3_Grafika
             modelGroup.Children.Add(model);
         }
 
-        private void Viewport3D_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Viewport3D_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             viewPort.CaptureMouse();
             start = e.GetPosition(this);
@@ -205,48 +205,32 @@ namespace Predmetni_zadatak_3_Grafika
             diffOffset.Y = translacija.OffsetY;
         }
 
-        private void viewPort_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void viewPort_MouseMove(object sender, MouseEventArgs e)
         {
             if (viewPort.IsMouseCaptured)
             {
                 var end = e.GetPosition(this);
-                var offsetX = end.X - start.X;
-                var offsetY = end.Y - start.Y;
-                var w = Width;
-                var h = Height;
-                var translateX = (offsetX * 100) / w;
-                var translateY = -(offsetY * 100) / h;
+                var offsetX = start.X - end.X;
+                var offsetY = start.Y - end.Y;
+                var translateX = (offsetX * 100) / Width;
+                var translateY = -(offsetY * 100) / Height;
                 translacija.OffsetX = diffOffset.X + (translateX / (100 * skaliranje.ScaleX)) * 1000;
-                translacija.OffsetY = diffOffset.Y + (translateY / (100 * skaliranje.ScaleX)) * 1000;
+                translacija.OffsetY = diffOffset.Y + (translateY / (100 * skaliranje.ScaleY)) * 1000;
             }
             if (rotate)
             {
                 var end = e.GetPosition(this);
                 var axis2D = end - start;
                 var axis3D = new Vector3D(-axis2D.Y, -axis2D.X, 0);
-                lab2.Content = $"start: {start}";
-                lab3.Content = $"end: {end}";
                 axisAngleRotation.Axis = axis3D;
                 axis2D.Normalize();
-                if (axis2D.X < 0 || axis2D.Y < 0)
-                {
-                    axisAngleRotation.Angle -= 0.05;
-                    lab.Content = $"Manje";
-                }
-                else
-                {
-                    axisAngleRotation.Angle += 0.05;
-                    lab.Content = $"Vece";
-                }
-                lab4.Content = $"Angle: {axisAngleRotation.Angle}";
-                //rotiranje.Rotation = new AxisAngleRotation3D(axis3D, angle);
+                axisAngleRotation.Angle += (axis2D.X < 0 || axis2D.Y < 0) ? -0.05 : 0.05;
             }
         }
 
         private void viewPort_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var p = e.GetPosition(win);
-            p = PointFromScreen(p);
+            var p = PointFromScreen(e.GetPosition(win));
             skaliranje.CenterX = p.X;
             skaliranje.CenterY = p.Y;
             skaliranje.CenterZ = 0;
@@ -343,7 +327,6 @@ namespace Predmetni_zadatak_3_Grafika
         {
             rotate = false;
             viewPort.ReleaseMouseCapture();
-            //AxisAngleRotation = new AxisAngleRotation3D();
         }
     }
 }

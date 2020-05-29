@@ -84,27 +84,5 @@
         </Viewport3D>
 
         <GroupBox x:Name="groupBox" />
-        <StackPanel Orientation="Horizontal">
-            <Label
-             Name="lab"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Top"
-             Content="text" />
-            <Label
-             Name="lab2"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Top"
-             Content="text" />
-            <Label
-             Name="lab3"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Top"
-             Content="text" />
-            <Label
-             Name="lab4"
-             HorizontalAlignment="Left"
-             VerticalAlignment="Top"
-             Content="text" />
-        </StackPanel>
     </Grid>
 </Window>
