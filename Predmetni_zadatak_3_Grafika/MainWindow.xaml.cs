@@ -127,66 +127,68 @@ namespace Predmetni_zadatak_3_Grafika
         private void MakeCube(PowerEntity entity, Brush brush)
         {
             const double HALF_SIZE = SIZE / 2;
+            const double HEIGHT = 10;
 
             var mesh = new MeshGeometry3D();
 
-            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y - HALF_SIZE, 0 - HALF_SIZE)); // dole levo
-            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y - HALF_SIZE, 0 - HALF_SIZE)); // dole desno
-            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y + HALF_SIZE, 0 - HALF_SIZE)); // gore levo
-            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y + HALF_SIZE, 0 - HALF_SIZE)); // gore desno
-            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y - HALF_SIZE, 0 + HALF_SIZE)); // dole levo dalje
-            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y - HALF_SIZE, 0 + HALF_SIZE)); // dole desno dalje
-            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y + HALF_SIZE, 0 + HALF_SIZE)); // gore levo dalje
-            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y + HALF_SIZE, 0 + HALF_SIZE)); // gore desno dalje
+            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y - HALF_SIZE, HEIGHT - HALF_SIZE)); // dole levo
+            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y - HALF_SIZE, HEIGHT - HALF_SIZE)); // dole desno
+            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y + HALF_SIZE, HEIGHT - HALF_SIZE)); // gore levo
+            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y + HALF_SIZE, HEIGHT - HALF_SIZE)); // gore desno
+            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y - HALF_SIZE, HEIGHT + HALF_SIZE)); // dole levo dalje
+            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y - HALF_SIZE, HEIGHT + HALF_SIZE)); // dole desno dalje
+            mesh.Positions.Add(new Point3D(entity.X - HALF_SIZE, entity.Y + HALF_SIZE, HEIGHT + HALF_SIZE)); // gore levo dalje
+            mesh.Positions.Add(new Point3D(entity.X + HALF_SIZE, entity.Y + HALF_SIZE, HEIGHT + HALF_SIZE)); // gore desno dalje
+
+            foreach (var item in modelGroup.Children)
+            {
+                while (mesh.Bounds.IntersectsWith(item.Bounds))
+                {
+                    for (int i = 0; i < mesh.Positions.Count; i++)
+                    {
+                        mesh.Positions[i] = new Point3D(mesh.Positions[i].X, mesh.Positions[i].Y, mesh.Positions[i].Z + HEIGHT);
+                    }
+                }
+            }
+
             #region Triangles
 
-            mesh.TriangleIndices.Add(2);
-            mesh.TriangleIndices.Add(3);
-            mesh.TriangleIndices.Add(1);
-
-            mesh.TriangleIndices.Add(3);
-            mesh.TriangleIndices.Add(1);
             mesh.TriangleIndices.Add(0);
-
-            mesh.TriangleIndices.Add(7);
             mesh.TriangleIndices.Add(1);
             mesh.TriangleIndices.Add(3);
-
-            mesh.TriangleIndices.Add(7);
-            mesh.TriangleIndices.Add(5);
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(2);
             mesh.TriangleIndices.Add(1);
-
-            mesh.TriangleIndices.Add(6);
             mesh.TriangleIndices.Add(5);
             mesh.TriangleIndices.Add(7);
-
-            mesh.TriangleIndices.Add(6);
-            mesh.TriangleIndices.Add(4);
-            mesh.TriangleIndices.Add(5);
-
-            mesh.TriangleIndices.Add(6);
-            mesh.TriangleIndices.Add(2);
-            mesh.TriangleIndices.Add(0);
-
-            mesh.TriangleIndices.Add(2);
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(4);
-
-            mesh.TriangleIndices.Add(2);
+            mesh.TriangleIndices.Add(1);
             mesh.TriangleIndices.Add(7);
             mesh.TriangleIndices.Add(3);
-
             mesh.TriangleIndices.Add(2);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(6);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(7);
+            mesh.TriangleIndices.Add(6);
+            mesh.TriangleIndices.Add(5);
             mesh.TriangleIndices.Add(6);
             mesh.TriangleIndices.Add(7);
-
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(1);
-            mesh.TriangleIndices.Add(5);
-
-            mesh.TriangleIndices.Add(0);
             mesh.TriangleIndices.Add(5);
             mesh.TriangleIndices.Add(4);
+            mesh.TriangleIndices.Add(6);
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(6);
+            mesh.TriangleIndices.Add(4);
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(2);
+            mesh.TriangleIndices.Add(6);
+            mesh.TriangleIndices.Add(4);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(4);
+            mesh.TriangleIndices.Add(5);
+            mesh.TriangleIndices.Add(1);
             #endregion
 
 
