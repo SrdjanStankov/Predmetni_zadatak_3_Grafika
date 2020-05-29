@@ -80,7 +80,7 @@ namespace Predmetni_zadatak_3_Grafika.Services
 
         public static double Convert(double point, double start, double scale)
         {
-            return (point - start) / scale;
+            return (point - start) * scale;
         }
 
         public static void ToLatLon(double utmX, double utmY, int zoneUTM, out double latitude, out double longitude)

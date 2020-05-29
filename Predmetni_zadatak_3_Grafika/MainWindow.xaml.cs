@@ -38,8 +38,8 @@ namespace Predmetni_zadatak_3_Grafika
         {
             InitializeComponent();
 
-            xScale = (Utils.LAT_MAX - Utils.LAT_MIN) / 1175;
-            yScale = (Utils.LON_MAX - Utils.LON_MIN) / 775;
+            yScale = 775 / (Utils.LAT_MAX - Utils.LAT_MIN);
+            xScale = 1175 / (Utils.LON_MAX - Utils.LON_MIN);
 
             var doc = new XmlDocument();
             doc.Load("Geographic.xml");
@@ -49,14 +49,32 @@ namespace Predmetni_zadatak_3_Grafika
             Utils.AddEntities(switchEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Switches/SwitchEntity"));
             Utils.AddLineEntities(lineEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Lines/LineEntity"));
 
-            substationEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
-            nodeEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
-            switchEntities.ForEach(item => { item.X = Utils.Convert(item.X, Utils.LAT_MIN, xScale); item.Y = Utils.Convert(item.Y, Utils.LON_MIN, yScale); });
+            substationEntities.ForEach(item =>
+            {
+                var newY = Utils.Convert(item.X, Utils.LAT_MIN, yScale);
+                var newX = Utils.Convert(item.Y, Utils.LON_MIN, xScale);
+                item.Y = newY;
+                item.X = newX;
+            });
+            nodeEntities.ForEach(item =>
+            {
+                var newY = Utils.Convert(item.X, Utils.LAT_MIN, yScale);
+                var newX = Utils.Convert(item.Y, Utils.LON_MIN, xScale);
+                item.Y = newY;
+                item.X = newX;
+            });
+            switchEntities.ForEach(item =>
+            {
+                var newY = Utils.Convert(item.X, Utils.LAT_MIN, yScale);
+                var newX = Utils.Convert(item.Y, Utils.LON_MIN, xScale);
+                item.Y = newY;
+                item.X = newX;
+            });
             lineEntities.ForEach(item =>
             {
                 for (var j = 0; j < item.Vertices.Count; j++)
                 {
-                    item.Vertices[j] = new Point3D(Utils.Convert(item.Vertices[j].X, Utils.LAT_MIN, xScale), Utils.Convert(item.Vertices[j].Y, Utils.LON_MIN, yScale), item.Vertices[j].Z);
+                    item.Vertices[j] = new Point3D(Utils.Convert(item.Vertices[j].Y, Utils.LON_MIN, xScale), Utils.Convert(item.Vertices[j].X, Utils.LAT_MIN, yScale), item.Vertices[j].Z);
                 }
             });
 
