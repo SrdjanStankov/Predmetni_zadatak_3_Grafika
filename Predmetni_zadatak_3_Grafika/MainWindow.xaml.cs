@@ -305,7 +305,7 @@ namespace Predmetni_zadatak_3_Grafika
         {
             var rayResult = result as RayHitTestResult;
             var tag = rayResult?.ModelHit.GetValue(TagProperty);
-            if (tag is object)
+            if (tag is PowerEntity)
             {
                 CreateLabel(mousePosition, tag);
             }
@@ -363,9 +363,9 @@ namespace Predmetni_zadatak_3_Grafika
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
             };
-            if (entity is BaseEntity)
+            if (entity is PowerEntity)
             {
-                label.Content = $"Id: {(entity as BaseEntity).Id}, Name: {(entity as BaseEntity).Name}, Type: {(entity as BaseEntity).GetType().Name}";
+                label.Content = $"Id: {(entity as PowerEntity).Id}, Name: {(entity as PowerEntity).Name}, Type: {(entity as PowerEntity).GetType().Name}";
             }
             label.Background = Brushes.White;
             label.Margin = new Thickness(mousePosition.X, mousePosition.Y, 0, 0);
