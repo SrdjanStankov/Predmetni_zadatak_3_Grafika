@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,6 +34,8 @@ namespace Predmetni_zadatak_3_Grafika
         private List<LineEntity> lineEntities = new List<LineEntity>();
         private CancellationTokenSource cts = new CancellationTokenSource();
         private AxisAngleRotation3D axisAngleRotation = new AxisAngleRotation3D();
+        private GeometryModel3D previousFirstModel;
+        private GeometryModel3D previousSecondModel;
 
         public MainWindow()
         {
@@ -78,7 +81,7 @@ namespace Predmetni_zadatak_3_Grafika
                 }
             });
 
-            substationEntities.ForEach(item => MakeCube(item, Brushes.Red));
+            substationEntities.ForEach(item => MakeCube(item, Brushes.Purple));
             nodeEntities.ForEach(item => MakeCube(item, Brushes.Green));
             switchEntities.ForEach(item => MakeCube(item, Brushes.Blue));
 
@@ -306,8 +309,51 @@ namespace Predmetni_zadatak_3_Grafika
             {
                 CreateLabel(mousePosition, tag);
             }
+            if (tag is LineEntity)
+            {
+                ReturnToPreviousColors();
+
+                var line = tag as LineEntity;
+                var a = rayResult.ModelHit as GeometryModel3D;
+                var first = modelGroup.Children.FirstOrDefault(item => (item.GetValue(TagProperty) as PowerEntity)?.Id == line.FirstEnd);
+                var second = modelGroup.Children.FirstOrDefault(item => (item.GetValue(TagProperty) as PowerEntity)?.Id == line.SecondEnd);
+                var firstGeometryModel3D = (first as GeometryModel3D);
+                var secondGeometryModel3D = (second as GeometryModel3D);
+                if (firstGeometryModel3D is object)
+                {
+                    firstGeometryModel3D.Material = new DiffuseMaterial(Brushes.Pink);
+                    previousFirstModel = firstGeometryModel3D;
+                }
+                if (secondGeometryModel3D is object)
+                {
+                    secondGeometryModel3D.Material = new DiffuseMaterial(Brushes.Pink);
+                    previousSecondModel = secondGeometryModel3D;
+                }
+            }
 
             return HitTestResultBehavior.Stop;
+        }
+
+        private void ReturnToPreviousColors()
+        {
+            ReturToModelToMaterial(previousFirstModel);
+            ReturToModelToMaterial(previousSecondModel);
+        }
+
+        private void ReturToModelToMaterial(GeometryModel3D model3D)
+        {
+            if (model3D?.GetValue(TagProperty) is SubstationEntity)
+            {
+                model3D.Material = new DiffuseMaterial(Brushes.Purple);
+            }
+            if (model3D?.GetValue(TagProperty) is NodeEntity)
+            {
+                model3D.Material = new DiffuseMaterial(Brushes.Green);
+            }
+            if (model3D?.GetValue(TagProperty) is SwitchEntity)
+            {
+                model3D.Material = new DiffuseMaterial(Brushes.Blue);
+            }
         }
 
         private void CreateLabel(Point mousePosition, object entity)
