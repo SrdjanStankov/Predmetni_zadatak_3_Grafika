@@ -70,7 +70,7 @@ namespace Predmetni_zadatak_3_Grafika.Services
                     {
                         X = x,
                         Y = y, 
-                        Z = 20
+                        Z = 1
                     });
                 }
 

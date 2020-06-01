@@ -97,25 +97,23 @@ namespace Predmetni_zadatak_3_Grafika
         private void MakeLine(double size, Point3D start, Point3D end, LineEntity entity)
         {
             var v = end - start;
-            var v1 = new Vector3D(v.X, -v.Y, v.Z);
-            var v2 = new Vector3D(-v.X, v.Y, v.Z);
+            var v1 = new Vector3D(-v.Y, v.X, v.Z);
+            var v2 = new Vector3D(v.Y, -v.X, v.Z);
             v1.Normalize();
             v2.Normalize();
 
             v1 *= size;
             v2 *= size;
-            var p1 = end;
-            var p2 = start;
-            var pointB = p1 + v1;
-            var pointC = p1 + v2;
-            var pointA = p2 + v1;
-            var pointD = p2 + v2;
+            var pointA = start + v1;
+            var pointD = start + v2;
+            var pointB = end + v1;
+            var pointC = end + v2;
 
             var mesh = new MeshGeometry3D();
-            mesh.Positions.Add(pointB);
-            mesh.Positions.Add(pointC);
             mesh.Positions.Add(pointA);
             mesh.Positions.Add(pointD);
+            mesh.Positions.Add(pointB);
+            mesh.Positions.Add(pointC);
 
             mesh.TriangleIndices.Add(0);
             mesh.TriangleIndices.Add(1);
@@ -148,7 +146,7 @@ namespace Predmetni_zadatak_3_Grafika
         private void MakeCube(PowerEntity entity, Brush brush)
         {
             const double HALF_SIZE = SIZE / 2;
-            const double HEIGHT = 10;
+            const double HEIGHT = SIZE;
 
             var mesh = new MeshGeometry3D();
 
