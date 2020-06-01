@@ -53,10 +53,21 @@
                          ScaleY="1"
                          ScaleZ="1" />
                         <RotateTransform3D
-                         x:Name="rotiranje"
                          CenterX="587.5"
                          CenterY="387.5"
-                         CenterZ="0" />
+                         CenterZ="0">
+                            <RotateTransform3D.Rotation>
+                                <AxisAngleRotation3D x:Name="rotateY" Axis="0,1,0" />
+                            </RotateTransform3D.Rotation>
+                        </RotateTransform3D>
+                        <RotateTransform3D
+                         CenterX="587.5"
+                         CenterY="387.5"
+                         CenterZ="0">
+                            <RotateTransform3D.Rotation>
+                                <AxisAngleRotation3D x:Name="rotateX" Axis="1,0,0" />
+                            </RotateTransform3D.Rotation>
+                        </RotateTransform3D>
                     </Transform3DGroup>
                 </ModelVisual3D.Transform>
                 <ModelVisual3D.Content>

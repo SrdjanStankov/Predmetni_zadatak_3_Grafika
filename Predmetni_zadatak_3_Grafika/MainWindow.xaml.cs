@@ -26,6 +26,7 @@ namespace Predmetni_zadatak_3_Grafika
         private int zoomMax = 7;
         private int zoomCurent = 1;
         private bool rotate = false;
+        private bool translate = false;
         private double xScale;
         private double yScale;
         private List<SubstationEntity> substationEntities = new List<SubstationEntity>();
@@ -163,7 +164,7 @@ namespace Predmetni_zadatak_3_Grafika
             {
                 while (mesh.Bounds.IntersectsWith(item.Bounds))
                 {
-                    for (int i = 0; i < mesh.Positions.Count; i++)
+                    for (var i = 0; i < mesh.Positions.Count; i++)
                     {
                         mesh.Positions[i] = new Point3D(mesh.Positions[i].X, mesh.Positions[i].Y, mesh.Positions[i].Z + HEIGHT);
                     }
@@ -224,33 +225,30 @@ namespace Predmetni_zadatak_3_Grafika
             start = e.GetPosition(this);
             diffOffset.X = translacija.OffsetX;
             diffOffset.Y = translacija.OffsetY;
+            translate = true;
         }
 
         private void viewPort_MouseMove(object sender, MouseEventArgs e)
         {
+            var end = e.GetPosition(this);
+            var offsetX = start.X - end.X;
+            var offsetY = start.Y - end.Y;
+            var translateX = (offsetX * 100) / Width;
+            var translateY = -(offsetY * 100) / Height;
+
             if (viewPort.IsMouseCaptured)
             {
-                var end = e.GetPosition(this);
-                var offsetX = start.X - end.X;
-                var offsetY = start.Y - end.Y;
-                var translateX = (offsetX * 100) / Width;
-                var translateY = -(offsetY * 100) / Height;
-                translacija.OffsetX = diffOffset.X + (translateX / (100 * skaliranje.ScaleX)) * 1000;
-                translacija.OffsetY = diffOffset.Y + (translateY / (100 * skaliranje.ScaleY)) * 1000;
-            }
-            if (rotate)
-            {
-                var end = e.GetPosition(this);
-                var axis2D = end - start;
-                if ((-20 < axis2D.X && axis2D.X < 0) || (-20 < axis2D.Y && axis2D.Y < 0) || (0 > axis2D.X && axis2D.X > 20) || (0 > axis2D.Y && axis2D.Y > 20))
+                if (translate)
                 {
-                    return;
+                    translacija.OffsetX = diffOffset.X + (translateX / (100 * skaliranje.ScaleX)) * 1000;
+                    translacija.OffsetY = diffOffset.Y + (translateY / (100 * skaliranje.ScaleY)) * 1000;
                 }
-
-                var axis3D = new Vector3D(-axis2D.Y, -axis2D.X, 0);
-                axisAngleRotation.Axis = axis3D;
-                axis2D.Normalize();
-                axisAngleRotation.Angle += (axis2D.X < 0 || axis2D.Y < 0) ? -0.05 : 0.05;
+                if (rotate)
+                {
+                    rotateY.Angle = (rotateY.Angle + -translateX) % 360;
+                    rotateX.Angle = (rotateX.Angle + translateY) % 360;
+                    start = end;
+                }
             }
         }
 
@@ -282,7 +280,7 @@ namespace Predmetni_zadatak_3_Grafika
             {
                 rotate = true;
                 start = e.GetPosition(this);
-                rotiranje.Rotation = axisAngleRotation;
+                viewPort.CaptureMouse();
             }
 
             if (e.ChangedButton == MouseButton.Left && e.ButtonState == MouseButtonState.Pressed)
@@ -395,6 +393,7 @@ namespace Predmetni_zadatak_3_Grafika
         private void viewPort_MouseUp(object sender, MouseButtonEventArgs e)
         {
             rotate = false;
+            translate = false;
             viewPort.ReleaseMouseCapture();
         }
     }
