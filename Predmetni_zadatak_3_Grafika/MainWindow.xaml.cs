@@ -245,8 +245,16 @@ namespace Predmetni_zadatak_3_Grafika
                 }
                 if (rotate)
                 {
-                    rotateY.Angle = (rotateY.Angle + -translateX) % 360;
-                    rotateX.Angle = (rotateX.Angle + translateY) % 360;
+                    var angleY = (rotateY.Angle + -translateX) % 360;
+                    var angleX = (rotateX.Angle + translateY) % 360;
+                    if (-65 < angleY && angleY < 65)
+                    {
+                        rotateY.Angle = angleY; 
+                    }
+                    if (-65 < angleX && angleX < 65)
+                    {
+                        rotateX.Angle = angleX;
+                    }
                     start = end;
                 }
             }
