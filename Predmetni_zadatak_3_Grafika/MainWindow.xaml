@@ -57,7 +57,7 @@
                          CenterY="387.5"
                          CenterZ="0">
                             <RotateTransform3D.Rotation>
-                                <AxisAngleRotation3D x:Name="rotateY" Axis="0,1,0" />
+                                <AxisAngleRotation3D x:Name="rotateY" Axis="0,0,1" />
                             </RotateTransform3D.Rotation>
                         </RotateTransform3D>
                         <RotateTransform3D
